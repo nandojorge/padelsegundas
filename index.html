@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🍽️ Segunda é Dia de Zeze's</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        
+        .trophy-bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .menu-item {
+            transition: all 0.3s ease;
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+        
+        .menu-item.unlocked {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: transform 0.2s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-5xl font-bold text-white mb-2">
+                Segunda é Dia de Zeze's
+            </h1>
+            <p class="text-lg md:text-xl text-white/90">5 jogos, 1 jantar</p>
+            <div class="mt-4 flex justify-center">
+                <button onclick="openGameModal()" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 px-6 rounded-full shadow-lg transition-all transform hover:scale-105 pulse-animation">
+                    ➕ Registar Novo Jogo
+                </button>
+            </div>
+        </div>
+
+        <!-- Placard Principal -->
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-8">
+            <!-- Dupla 1: Salgado & Sá -->
+            <div class="bg-white/95 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl card-hover">
+                <div class="text-center">
+                    <div class="text-2xl sm:text-3xl md:text-4xl mb-2 md:mb-3">🦈</div>
+                    <h2 class="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-blue-600 mb-1 md:mb-2">Salgado & Sá</h2>
+                    <div class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-blue-700 mb-1 md:mb-2" id="score1">0</div>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600">vitórias</p>
+                </div>
+            </div>
+
+            <!-- Dupla 2: Andrade & Machado -->
+            <div class="bg-white/95 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl card-hover">
+                <div class="text-center">
+                    <div class="text-2xl sm:text-3xl md:text-4xl mb-2 md:mb-3">🐙</div>
+                    <h2 class="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-red-600 mb-1 md:mb-2">Andrade & Machado</h2>
+                    <div class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-red-700 mb-1 md:mb-2" id="score2">0</div>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600">vitórias</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu do Jantar -->
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-2xl mb-8">
+            <h3 class="text-xl md:text-2xl font-bold text-center mb-6 text-gray-800">🍽️ Progresso do Menu</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="menu-item text-center p-4 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl" id="menu-1">
+                    <div class="text-3xl md:text-4xl mb-2">🥟</div>
+                    <p class="font-semibold text-gray-700 text-sm md:text-base">Rissóis</p>
+                    <p class="text-xs text-gray-500">1ª vitória</p>
+                </div>
+                <div class="menu-item text-center p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl" id="menu-2">
+                    <div class="text-3xl md:text-4xl mb-2">🍺</div>
+                    <p class="font-semibold text-gray-700 text-sm md:text-base">Fino</p>
+                    <p class="text-xs text-gray-500">2ª vitória</p>
+                </div>
+                <div class="menu-item text-center p-4 bg-gradient-to-br from-red-100 to-red-200 rounded-xl" id="menu-3">
+                    <div class="text-3xl md:text-4xl mb-2">🥪</div>
+                    <p class="font-semibold text-gray-700 text-sm md:text-base">Pregos</p>
+                    <p class="text-xs text-gray-500">3ª vitória</p>
+                </div>
+                <div class="menu-item text-center p-4 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl" id="menu-4">
+                    <div class="text-3xl md:text-4xl mb-2">🍟</div>
+                    <p class="font-semibold text-gray-700 text-sm md:text-base">Batata Frita</p>
+                    <p class="text-xs text-gray-500">4ª vitória</p>
+                </div>
+                <div class="menu-item text-center p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl col-span-2 md:col-span-1" id="menu-5">
+                    <div class="text-3xl md:text-4xl mb-2">🍮</div>
+                    <p class="font-semibold text-gray-700 text-sm md:text-base">Pudim</p>
+                    <p class="text-xs text-gray-500">5ª vitória</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico de Jogos -->
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-2xl mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h3 class="text-xl md:text-2xl font-bold text-gray-800">📋 Histórico de Jogos</h3>
+                <div class="flex gap-2">
+                    <button onclick="resetTournament()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                        Reset
+                    </button>
+                </div>
+            </div>
+            <div id="gameHistory" class="space-y-3">
+                <div class="text-center py-8 text-gray-500">
+                    <div class="text-4xl mb-2">🎾</div>
+                    <p>Nenhum jogo registado ainda</p>
+                    <p class="text-sm">Cliquem em "Registar Novo Jogo" para começar!</p>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!-- Modal de Registo de Jogo -->
+    <div id="gameModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">⚔️ Registar Nova Batalha</h2>
+            
+            <form id="gameForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">📅 Data do Jogo</label>
+                    <input type="date" id="gameDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">📍 Local do Jogo</label>
+                    <input type="text" id="gameLocation" placeholder="Ex: Clube de Ténis do Porto" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">🦈 Salgado & Sá</label>
+                        <div class="flex items-center justify-center gap-4">
+                            <button type="button" onclick="changeSets(1, -1)" class="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full text-xl font-bold transition-colors flex items-center justify-center">
+                                −
+                            </button>
+                            <div class="text-3xl font-bold text-blue-600 w-16 text-center" id="sets1Display">0</div>
+                            <button type="button" onclick="changeSets(1, 1)" class="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full text-xl font-bold transition-colors flex items-center justify-center">
+                                +
+                            </button>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">sets ganhos</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">🐙 Andrade & Machado</label>
+                        <div class="flex items-center justify-center gap-4">
+                            <button type="button" onclick="changeSets(2, -1)" class="w-12 h-12 bg-red-500 hover:bg-red-600 text-white rounded-full text-xl font-bold transition-colors flex items-center justify-center">
+                                −
+                            </button>
+                            <div class="text-3xl font-bold text-red-600 w-16 text-center" id="sets2Display">0</div>
+                            <button type="button" onclick="changeSets(2, 1)" class="w-12 h-12 bg-red-500 hover:bg-red-600 text-white rounded-full text-xl font-bold transition-colors flex items-center justify-center">
+                                +
+                            </button>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">sets ganhos</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeGameModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors">
+                        Registar Jogo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Vitória -->
+    <div id="victoryModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div class="text-6xl mb-4 trophy-bounce">🏆</div>
+            <h2 class="text-3xl font-bold mb-4 text-gray-800" id="victoryTitle">Parabéns!</h2>
+            <p class="text-lg text-gray-600 mb-6" id="victoryMessage">Ganharam o jantar completo!</p>
+            <button onclick="closeVictoryModal()" class="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                🎉 Celebrar!
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md mx-4 text-center">
+            <div class="text-4xl mb-4" id="confirmIcon">⚠️</div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800" id="confirmTitle">Confirmar Ação</h3>
+            <p class="text-gray-600 mb-6" id="confirmMessage">Tem a certeza?</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmAction()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition-colors">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scores = { team1: 0, team2: 0 };
+        let dinnersPaid = { team1: 0, team2: 0 };
+        let dinnersHistory = [];
+
+        let gameHistory = [];
+        let gameNumber = 1;
+
+        // Definir data de hoje por defeito
+        document.getElementById('gameDate').valueAsDate = new Date();
+
+        // Variáveis para controlar os sets no modal
+        let modalSets1 = 0;
+        let modalSets2 = 0;
+
+        // Função para alterar sets no modal
+        function changeSets(team, change) {
+            if (team === 1) {
+                modalSets1 = Math.max(0, Math.min(3, modalSets1 + change));
+                document.getElementById('sets1Display').textContent = modalSets1;
+            } else {
+                modalSets2 = Math.max(0, Math.min(3, modalSets2 + change));
+                document.getElementById('sets2Display').textContent = modalSets2;
+            }
+        }
+
+        // Integração com Base de Dados JSONBin
+        const API_URL = 'https://api.jsonbin.io/v3/b/68d45f2eae596e708ffa72a4';
+        const API_KEY = '$2a$10$p2B6kIgO16ed1z49Jr3RNeVTN0uabdyVXVjlSsqctFLPfxeuymD.u';
+
+        // Carregar dados da BD
+        async function loadFromDatabase() {
+            try {
+                const response = await fetch(API_URL + '/latest', {
+                    headers: {
+                        'X-Master-Key': API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.record) {
+                        scores = data.record.scores || { team1: 0, team2: 0 };
+                        dinnersPaid = data.record.dinnersPaid || { team1: 0, team2: 0 };
+                        dinnersHistory = data.record.dinnersHistory || [];
+                        gameHistory = data.record.gameHistory || [];
+                        gameNumber = data.record.gameNumber || 1;
+                        updateDisplay();
+                        console.log('✅ Dados carregados da base de dados online!');
+                        showNotification('📡 Dados sincronizados!', 'success');
+                    }
+                } else {
+                    throw new Error('Erro na resposta da API');
+                }
+            } catch (error) {
+                console.log('⚠️ A usar dados locais:', error);
+                loadData(); // Fallback para localStorage
+                showNotification('📱 A usar dados locais', 'warning');
+            }
+        }
+
+        // Guardar dados na BD
+        async function saveToDatabase() {
+            try {
+                const dataToSave = {
+                    scores,
+                    dinnersPaid,
+                    dinnersHistory,
+                    gameHistory,
+                    gameNumber,
+                    lastUpdated: new Date().toISOString()
+                };
+
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(dataToSave)
+                });
+
+                if (response.ok) {
+                    console.log('✅ Dados guardados na base de dados online!');
+                    showNotification('💾 Dados guardados online!', 'success');
+                } else {
+                    throw new Error('Erro ao guardar na BD');
+                }
+            } catch (error) {
+                console.log('⚠️ A usar armazenamento local:', error);
+                saveData(); // Fallback para localStorage
+                showNotification('💾 Guardado localmente', 'warning');
+            }
+        }
+
+        // Carregar dados salvos (fallback local)
+        function loadData() {
+            const savedData = localStorage.getItem('padelChampionship');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                scores = data.scores || { team1: 0, team2: 0 };
+                dinnersPaid = data.dinnersPaid || { team1: 0, team2: 0 };
+                dinnersHistory = data.dinnersHistory || [];
+                gameHistory = data.gameHistory || [];
+                gameNumber = data.gameNumber || 1;
+                updateDisplay();
+            }
+        }
+
+        // Salvar dados (fallback local)
+        function saveData() {
+            const data = {
+                scores,
+                dinnersPaid,
+                dinnersHistory,
+                gameHistory,
+                gameNumber
+            };
+            localStorage.setItem('padelChampionship', JSON.stringify(data));
+        }
+
+        // Mostrar notificações
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white font-medium transition-all transform translate-x-full`;
+            
+            if (type === 'success') {
+                notification.classList.add('bg-green-500');
+            } else if (type === 'warning') {
+                notification.classList.add('bg-yellow-500');
+            } else {
+                notification.classList.add('bg-blue-500');
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Abrir modal de jogo
+        function openGameModal() {
+            document.getElementById('gameModal').classList.remove('hidden');
+            document.getElementById('gameModal').classList.add('flex');
+        }
+
+        // Fechar modal de jogo
+        function closeGameModal() {
+            document.getElementById('gameModal').classList.add('hidden');
+            document.getElementById('gameModal').classList.remove('flex');
+            document.getElementById('gameForm').reset();
+            document.getElementById('gameDate').valueAsDate = new Date();
+            // Reset dos sets
+            modalSets1 = 0;
+            modalSets2 = 0;
+            document.getElementById('sets1Display').textContent = '0';
+            document.getElementById('sets2Display').textContent = '0';
+        }
+
+        // Processar formulário de jogo
+        document.getElementById('gameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const date = document.getElementById('gameDate').value;
+            const location = document.getElementById('gameLocation').value;
+            const sets1 = modalSets1;
+            const sets2 = modalSets2;
+            
+            // Validar que alguém ganhou
+            if (sets1 === sets2) {
+                alert('Um dos equipas tem de ganhar mais sets que a outra!');
+                return;
+            }
+            
+            // Determinar vencedor
+            const winner = sets1 > sets2 ? 1 : 2;
+            const winnerName = winner === 1 ? 'Salgado & Sá' : 'Andrade & Machado';
+            
+            // Atualizar pontuações
+            scores[`team${winner}`]++;
+            
+            // Adicionar ao histórico
+            gameHistory.unshift({
+                game: gameNumber++,
+                date: new Date(date).toLocaleDateString('pt-PT'),
+                location,
+                sets1,
+                sets2,
+                winner: winnerName,
+                winnerTeam: winner
+            });
+            
+            updateDisplay();
+            saveToDatabase();
+            closeGameModal();
+            
+            // Verificar se alguém ganhou o torneio
+            if (scores[`team${winner}`] >= 5) {
+                setTimeout(() => showVictoryModal(winnerName, winner), 500);
+            }
+        });
+
+        // Atualizar display
+        function updateDisplay() {
+            document.getElementById('score1').textContent = scores.team1;
+            document.getElementById('score2').textContent = scores.team2;
+            
+
+            
+            // Atualizar menu
+            const maxScore = Math.max(scores.team1, scores.team2);
+            for (let i = 1; i <= 5; i++) {
+                const menuItem = document.getElementById(`menu-${i}`);
+                if (i <= maxScore) {
+                    menuItem.classList.add('unlocked');
+                    menuItem.classList.add('ring-2', 'ring-green-400', 'shadow-lg');
+                } else {
+                    menuItem.classList.remove('unlocked', 'ring-2', 'ring-green-400', 'shadow-lg');
+                }
+            }
+
+            // Atualizar histórico
+            updateGameHistory();
+        }
+
+        // Atualizar histórico de jogos
+        function updateGameHistory() {
+            const historyDiv = document.getElementById('gameHistory');
+            
+            if (gameHistory.length === 0) {
+                historyDiv.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">🎾</div>
+                        <p>Nenhum jogo registado ainda</p>
+                        <p class="text-sm">Cliquem em "Registar Novo Jogo" para começar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            historyDiv.innerHTML = gameHistory.map((game, index) => `
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border-l-4 border-${game.winnerTeam === 1 ? 'blue' : 'red'}-500">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-${game.winnerTeam === 1 ? 'blue' : 'red'}-100 text-${game.winnerTeam === 1 ? 'blue' : 'red'}-800 px-2 py-1 rounded text-sm font-medium">
+                                    Jogo ${game.game}
+                                </span>
+                                <span class="font-semibold text-gray-800">${game.winner}</span>
+                                <span class="text-xl">🏆</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                📍 ${game.location} • 📅 ${game.date}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <div class="font-bold text-lg">
+                                    <span class="text-blue-600">${game.sets1}</span>
+                                    -
+                                    <span class="text-red-600">${game.sets2}</span>
+                                </div>
+                                <div class="text-xs text-gray-500">sets</div>
+                            </div>
+                            <button onclick="deleteGame(${index})" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg text-sm transition-colors" title="Eliminar jogo">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+
+        // Mostrar modal de vitória
+        function showVictoryModal(teamName, winnerTeam) {
+            // Registar o jantar ganho
+            const loserTeam = winnerTeam === 1 ? 2 : 1;
+            dinnersPaid[`team${loserTeam}`]++;
+            
+            // Adicionar ao histórico de jantares
+            dinnersHistory.unshift({
+                winner: teamName,
+                winnerTeam: winnerTeam,
+                date: new Date().toLocaleDateString('pt-PT'),
+                tournament: dinnersHistory.length + 1
+            });
+            
+            document.getElementById('victoryTitle').textContent = `${teamName} Venceram!`;
+            document.getElementById('victoryMessage').textContent = 'Parabéns! Ganharam o jantar completo de 5 pratos! 🍽️';
+            document.getElementById('victoryModal').classList.remove('hidden');
+            document.getElementById('victoryModal').classList.add('flex');
+            
+            // Atualizar display e guardar
+            updateDisplay();
+            saveToDatabase();
+        }
+
+        // Fechar modal de vitória
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.add('hidden');
+            document.getElementById('victoryModal').classList.remove('flex');
+        }
+
+        // Variável para guardar a ação pendente
+        let pendingAction = null;
+
+        // Mostrar modal de confirmação personalizado
+        function showConfirmModal(title, message, icon, action) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmIcon').textContent = icon;
+            pendingAction = action;
+            
+            document.getElementById('confirmModal').classList.remove('hidden');
+            document.getElementById('confirmModal').classList.add('flex');
+        }
+
+        // Fechar modal de confirmação
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('confirmModal').classList.remove('flex');
+            pendingAction = null;
+        }
+
+        // Executar ação confirmada
+        function confirmAction() {
+            if (pendingAction) {
+                pendingAction();
+            }
+            closeConfirmModal();
+        }
+
+        // Eliminar jogo individual
+        function deleteGame(gameIndex) {
+            showConfirmModal(
+                'Eliminar Jogo',
+                'Tem a certeza que quer eliminar este jogo?',
+                '🗑️',
+                () => {
+                    const deletedGame = gameHistory[gameIndex];
+                    
+                    // Remover vitória da equipa
+                    if (deletedGame.winnerTeam === 1) {
+                        scores.team1 = Math.max(0, scores.team1 - 1);
+                    } else {
+                        scores.team2 = Math.max(0, scores.team2 - 1);
+                    }
+                    
+                    // Remover jogo do histórico
+                    gameHistory.splice(gameIndex, 1);
+                    
+                    updateDisplay();
+                    saveToDatabase();
+                    showNotification('🗑️ Jogo eliminado!', 'success');
+                }
+            );
+        }
+
+        // Limpar histórico
+        function clearHistory() {
+            showConfirmModal(
+                'Limpar Histórico',
+                'Tem a certeza que quer limpar o histórico de jogos? As pontuações mantêm-se.',
+                '🧹',
+                () => {
+                    gameHistory = [];
+                    updateDisplay();
+                    saveToDatabase();
+                    showNotification('🗑️ Histórico limpo!', 'success');
+                }
+            );
+        }
+
+        // Reset do torneio
+        function resetTournament() {
+            // Verificar se há um vencedor atual para registar no histórico
+            const currentWinner = scores.team1 >= 5 ? 1 : (scores.team2 >= 5 ? 2 : null);
+            
+            if (currentWinner) {
+                showConfirmModal(
+                    'Reiniciar Torneio',
+                    'Há um vencedor atual! Quer registar este jantar no histórico antes de reiniciar?',
+                    '🏆',
+                    () => {
+                        // Registar o jantar antes do reset
+                        const winnerName = currentWinner === 1 ? 'Salgado & Sá' : 'Andrade & Machado';
+                        const loserTeam = currentWinner === 1 ? 2 : 1;
+                        
+                        dinnersPaid[`team${loserTeam}`]++;
+                        dinnersHistory.unshift({
+                            winner: winnerName,
+                            winnerTeam: currentWinner,
+                            date: new Date().toLocaleDateString('pt-PT'),
+                            tournament: dinnersHistory.length + 1
+                        });
+                        
+                        // Agora fazer o reset
+                        scores = { team1: 0, team2: 0 };
+                        gameHistory = [];
+                        gameNumber = 1;
+                        updateDisplay();
+                        saveToDatabase();
+                        showNotification('🏆 Jantar registado e torneio reiniciado!', 'success');
+                    }
+                );
+            } else {
+                showConfirmModal(
+                    'Reiniciar Torneio',
+                    'Tem a certeza que quer começar um novo torneio? Todos os dados serão perdidos.',
+                    '🔄',
+                    () => {
+                        scores = { team1: 0, team2: 0 };
+                        gameHistory = [];
+                        gameNumber = 1;
+                        updateDisplay();
+                        saveToDatabase();
+                        showNotification('🔄 Torneio reiniciado!', 'success');
+                    }
+                );
+            }
+        }
+
+        // Inicializar - carregar da base de dados online
+        loadFromDatabase();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984578d2456ee3b9',t:'MTc1ODc1MDM1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
