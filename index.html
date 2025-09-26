@@ -1,621 +1,1733 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🍽️ Segunda é Dia de Zeze's</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>VivusFisio Plan - Sistema de Gestão</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#111827",
+                "secondary": "#6b7280",
+                "background-light": "#f9fafb",
+                "background-dark": "#1f2937",
+                "card-light": "#ffffff",
+                "card-dark": "#374151"
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {
+                "DEFAULT": "0.5rem",
+                "lg": "1rem",
+                "xl": "1.5rem",
+                "full": "9999px"
+              },
+            },
+          },
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        
-        .trophy-bounce {
-            animation: bounce 2s infinite;
+        body {
+          min-height: max(884px, 100dvh);
+          font-family: 'Inter', sans-serif;
         }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
+        .page { display: none; }
+        .page.active { display: block; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { background-color: #111827; color: white; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #111827;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        
-        .menu-item {
-            transition: all 0.3s ease;
-            opacity: 0.4;
-            transform: scale(0.98);
-        }
-        
-        .menu-item.unlocked {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-        
-        .card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(75, 85, 99, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(75, 85, 99, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(75, 85, 99, 0); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen">
-    <div class="container mx-auto px-4 py-6">
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page active">
+        <div class="flex flex-col min-h-screen">
+            <main class="flex-grow flex flex-col justify-center items-center px-6">
+                <div class="w-full max-w-sm mx-auto flex flex-col items-center">
+                    <div class="mb-6">
+                        <div class="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden" id="logoContainer">
+                            <img 
+                                src="images/vivuslogo.png" 
+                                alt="Vivusfisio Logo" 
+                                class="w-full h-full object-cover"
+                                onload="document.getElementById('logoContainer').classList.remove('bg-primary');"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; document.getElementById('logoContainer').classList.add('bg-primary');"
+                            >
+                            <span class="w-full h-full flex items-center justify-center bg-primary rounded-full" style="display: none;">VF</span>
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-primary dark:text-white tracking-tighter mb-2">Vivusfisio Plano</h1>
+                    <p class="text-sm text-secondary dark:text-gray-400 mb-6">Código de Acesso</p>
+                    
+                    <form id="loginForm" class="w-full space-y-4">
+                        <div class="flex flex-col">
+                            <label class="sr-only" for="accessCode">Código único de acesso</label>
+                            <input 
+                                class="form-input w-full bg-card-light dark:bg-card-dark border-2 border-gray-200 dark:border-gray-600 rounded-lg h-14 px-4 text-center text-xl tracking-[0.1em] font-bold text-primary dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors duration-300" 
+                                id="accessCode" 
+                                maxlength="12" 
+                                placeholder="●●●●●●●●●●●●" 
+                                type="text"
+                                required
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            id="loginButton"
+                            class="w-full h-14 bg-primary text-white font-bold text-lg rounded-lg shadow-lg hover:bg-opacity-90 transition-opacity"
+                        >
+                            <span id="loginText">Entrar</span>
+                            <span id="loginLoading" class="loading" style="display: none;"></span>
+                        </button>
+                    </form>
+
+                    <div id="loginError" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm w-full" style="display: none;">
+                        <strong>Erro:</strong> <span id="errorMessage"></span>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-xs text-secondary dark:text-gray-400">
+                            Não tem código? Entre em contato com o administrador.
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" class="page">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-2xl sm:text-3xl md:text-5xl font-light text-gray-800 mb-2 leading-tight">
-                Segunda é Dia de Zeze's
-            </h1>
-            <p class="text-lg md:text-xl text-gray-600">5 jogos, 1 jantar</p>
-            <div class="mt-4 flex justify-center">
-                <button onclick="openGameModal()" class="bg-gray-800 hover:bg-gray-900 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition-all pulse-animation">
-                    ➕ Registar Novo Jogo
-                </button>
-            </div>
-        </div>
-
-        <!-- Placard Principal -->
-        <div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-8">
-            <!-- Dupla 1: Salgado & Sá -->
-            <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm border border-gray-100 card-hover">
-                <div class="text-center">
-                    <div class="text-2xl sm:text-3xl md:text-4xl mb-2 md:mb-3">🦈</div>
-                    <h2 class="text-sm sm:text-lg md:text-xl lg:text-2xl font-medium text-slate-700 mb-1 md:mb-2">Salgado & Sá</h2>
-                    <div class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light text-slate-800 mb-1 md:mb-2" id="score1">0</div>
-                    <p class="text-xs sm:text-sm md:text-base text-gray-500">vitórias</p>
+        <header class="flex items-center justify-between p-4">
+            <!-- User Profile in Header Left -->
+            <div class="flex items-center space-x-2 text-primary dark:text-white">
+                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold" id="headerUserInitials">
+                    VF
+                </div>
+                <div class="text-left">
+                    <div class="text-sm font-medium" id="headerUserName">Usuário</div>
+                    <div class="text-xs text-secondary dark:text-gray-400" id="headerUserType">Tipo</div>
                 </div>
             </div>
+            
+            <!-- Menu Button -->
+            <button onclick="toggleSideMenu()" class="text-primary dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </header>
 
-            <!-- Dupla 2: Andrade & Machado -->
-            <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm border border-gray-100 card-hover">
-                <div class="text-center">
-                    <div class="text-2xl sm:text-3xl md:text-4xl mb-2 md:mb-3">🐙</div>
-                    <h2 class="text-sm sm:text-lg md:text-xl lg:text-2xl font-medium text-slate-700 mb-1 md:mb-2">Andrade & Machado</h2>
-                    <div class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light text-slate-800 mb-1 md:mb-2" id="score2">0</div>
-                    <p class="text-xs sm:text-sm md:text-base text-gray-500">vitórias</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Menu do Jantar -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
-            <h3 class="text-xl md:text-2xl font-medium text-center mb-6 text-gray-800">🍽️ Progresso do Menu</h3>
-            <div class="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4">
-                <div class="menu-item text-center p-2 sm:p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-lg md:rounded-xl" id="menu-1">
-                    <div class="text-xl sm:text-2xl md:text-4xl mb-1 md:mb-2">🥟</div>
-                    <p class="font-medium text-gray-700 text-xs sm:text-sm md:text-base">Rissóis</p>
-                    <p class="text-xs text-gray-400 hidden sm:block">1ª vitória</p>
-                </div>
-                <div class="menu-item text-center p-2 sm:p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-lg md:rounded-xl" id="menu-2">
-                    <div class="text-xl sm:text-2xl md:text-4xl mb-1 md:mb-2">🍺</div>
-                    <p class="font-medium text-gray-700 text-xs sm:text-sm md:text-base">Fino</p>
-                    <p class="text-xs text-gray-400 hidden sm:block">2ª vitória</p>
-                </div>
-                <div class="menu-item text-center p-2 sm:p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-lg md:rounded-xl" id="menu-3">
-                    <div class="text-xl sm:text-2xl md:text-4xl mb-1 md:mb-2">🥪</div>
-                    <p class="font-medium text-gray-700 text-xs sm:text-sm md:text-base">Pregos</p>
-                    <p class="text-xs text-gray-400 hidden sm:block">3ª vitória</p>
-                </div>
-                <div class="menu-item text-center p-2 sm:p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-lg md:rounded-xl" id="menu-4">
-                    <div class="text-xl sm:text-2xl md:text-4xl mb-1 md:mb-2">🍟</div>
-                    <p class="font-medium text-gray-700 text-xs sm:text-sm md:text-base">Batata</p>
-                    <p class="text-xs text-gray-400 hidden sm:block">4ª vitória</p>
-                </div>
-                <div class="menu-item text-center p-2 sm:p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-lg md:rounded-xl" id="menu-5">
-                    <div class="text-xl sm:text-2xl md:text-4xl mb-1 md:mb-2">🍮</div>
-                    <p class="font-medium text-gray-700 text-xs sm:text-sm md:text-base">Pudim</p>
-                    <p class="text-xs text-gray-400 hidden sm:block">5ª vitória</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Histórico de Jogos -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <h3 class="text-xl md:text-2xl font-medium text-gray-800">📋 Histórico de Jogos</h3>
-                <div class="flex gap-2">
-                    <button onclick="resetTournament()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        Reset
+        <!-- Side Menu Overlay -->
+        <div id="sideMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="closeSideMenu()"></div>
+        
+        <!-- Side Menu -->
+        <div id="sideMenu" class="fixed top-0 right-0 h-full w-80 bg-card-light dark:bg-card-dark shadow-xl z-50 transform translate-x-full transition-transform duration-300">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-primary dark:text-white">Menu</h2>
+                    <button onclick="closeSideMenu()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
-            <div id="gameHistory" class="space-y-3">
-                <div class="text-center py-8 text-gray-400">
-                    <div class="text-4xl mb-2">🎾</div>
-                    <p>Nenhum jogo registado ainda</p>
-                    <p class="text-sm">Cliquem em "Registar Novo Jogo" para começar!</p>
+            
+            <div class="p-4 space-y-4">
+                <!-- User Info -->
+                <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="sideMenuUserInitials">
+                        VF
+                    </div>
+                    <div>
+                        <div class="font-medium text-primary dark:text-white" id="sideMenuUserName">Usuário</div>
+                        <div class="text-sm text-secondary dark:text-gray-400" id="sideMenuUserType">Tipo</div>
+                    </div>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="space-y-2">
+                    <!-- Dashboard -->
+                    <button onclick="goToDashboard()" class="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                        </svg>
+                        <span class="text-primary dark:text-white">Dashboard</span>
+                    </button>
+
+                    <!-- All Plans -->
+                    <button onclick="showAllPlans()" class="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-primary dark:text-white">Todos os Planos</span>
+                    </button>
+
+                    <!-- User Management (Master only) -->
+                    <button id="userManagementMenuItem" onclick="showUserManagement()" class="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" style="display: none;">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                        <span class="text-primary dark:text-white">Gestão de Utilizadores</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
+
+                    <!-- Logout -->
+                    <button onclick="logout()" class="w-full flex items-center space-x-3 p-3 text-left hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-red-600 dark:text-red-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>Sair</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-
-
-    </div>
-
-    <!-- Modal de Registo de Jogo -->
-    <div id="gameModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto shadow-lg border border-gray-100">
-            <h2 class="text-2xl font-medium mb-6 text-center text-gray-800">⚔️ Registar Nova Batalha</h2>
-            
-            <form id="gameForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">📅 Data do Jogo</label>
-                    <input type="date" id="gameDate" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent" required>
+        <!-- Navigation Tabs -->
+        <nav id="navigationTabs" class="bg-card-light dark:bg-card-dark border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+            <div class="px-4">
+                <div class="flex space-x-1 overflow-x-auto" id="tabContainer">
+                    <!-- Tabs will be dynamically added based on user type -->
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">📍 Local do Jogo</label>
-                    <input type="text" id="gameLocation" placeholder="Ex: Clube de Ténis do Porto" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent" required>
-                </div>
-                
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">🦈 Salgado & Sá</label>
-                        <div class="flex items-center justify-center gap-4">
-                            <button type="button" onclick="changeSets(1, -1)" class="w-12 h-12 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xl font-medium transition-colors flex items-center justify-center">
-                                −
-                            </button>
-                            <div class="text-3xl font-light text-gray-800 w-16 text-center" id="sets1Display">0</div>
-                            <button type="button" onclick="changeSets(1, 1)" class="w-12 h-12 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xl font-medium transition-colors flex items-center justify-center">
-                                +
-                            </button>
+            </div>
+        </nav>
+
+        <main class="p-4 space-y-8 pb-24 bg-background-light dark:bg-background-dark min-h-screen">
+
+            <!-- Master UI Tab -->
+            <div id="master" class="tab-content space-y-8">
+
+                <!-- Planos em aprovação -->
+                <section>
+                    <button onclick="toggleSection('pendingPlans')" class="w-full flex items-center justify-between text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
+                        <h3 class="text-xl font-bold text-primary dark:text-white">Planos em aprovação <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(2)</span></h3>
+                        <svg id="pendingPlansIcon" class="w-5 h-5 text-primary dark:text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="pendingPlans" class="space-y-3">
+                        <div class="flex items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-3 shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 6v6l4 2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-primary dark:text-white">Plano de Reabilitação de Ombro</p>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Carlos Pereira</p>
+                            </div>
                         </div>
-                        <p class="text-center text-sm text-gray-500 mt-2">sets ganhos</p>
+                        
+                        <div class="flex items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-3 shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 6v6l4 2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-primary dark:text-white">Plano de Fortalecimento Lombar</p>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Ana Costa</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Planos Abertos -->
+                <section>
+                    <button onclick="toggleSection('activePlans')" class="w-full flex items-center justify-between text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
+                        <h3 class="text-xl font-bold text-primary dark:text-white">Planos Abertos <span id="activePlansCount" class="text-sm font-normal text-gray-500 dark:text-gray-400">(0)</span></h3>
+                        <svg id="activePlansIcon" class="w-5 h-5 text-primary dark:text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="activePlans" class="space-y-3">
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="loading mx-auto mb-2"></div>
+                            <div class="text-sm">Carregando planos...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sessões Realizadas -->
+                <section>
+                    <button onclick="toggleSection('completedSessions')" class="w-full flex items-center justify-between text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
+                        <h3 class="text-xl font-bold text-primary dark:text-white">Sessões Realizadas <span id="completedSessionsCount" class="text-sm font-normal text-gray-500 dark:text-gray-400">(0)</span></h3>
+                        <svg id="completedSessionsIcon" class="w-5 h-5 text-primary dark:text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="completedSessions" class="space-y-3">
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="loading mx-auto mb-2"></div>
+                            <div class="text-sm">Carregando sessões...</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- All Plans Page -->
+            <div id="allPlans" class="tab-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-primary dark:text-white">📋 Todos os Planos</h2>
+                        <p class="text-secondary dark:text-gray-400 text-sm mt-1">Visualizar todos os planos do sistema</p>
+                    </div>
+                    <button onclick="goToDashboard()" class="text-blue-600 text-sm hover:text-blue-700">← Voltar ao Dashboard</button>
+                </div>
+
+                <!-- Filter Options -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold mb-3 text-primary dark:text-white">🔍 Filtros</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <select class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white">
+                            <option value="">Todos os Status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="aprovado">Aprovado</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="concluido">Concluído</option>
+                        </select>
+                        <select class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white">
+                            <option value="">Todos os Fisioterapeutas</option>
+                            <option value="maria">Dra. Maria Santos</option>
+                            <option value="carlos">Dr. Carlos Lima</option>
+                            <option value="joao">Dr. João Silva</option>
+                        </select>
+                        <input type="text" placeholder="Buscar por paciente..." class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white">
+                    </div>
+                </div>
+
+                <!-- Plans List -->
+                <div class="space-y-4">
+                    <!-- Pending Plans -->
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-primary dark:text-white">Plano de Reabilitação de Ombro</h4>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Carlos Pereira</p>
+                                <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: Dra. Maria Santos</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Pendente</span>
+                        </div>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>📅 Criado em: 15/01/2024</div>
+                            <div>🎯 Objetivo: Recuperação da mobilidade do ombro direito</div>
+                            <div>💪 Exercícios: 6</div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">✓ Aprovar</button>
+                            <button class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700">✗ Rejeitar</button>
+                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">👁️ Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-primary dark:text-white">Plano de Fortalecimento Lombar</h4>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Ana Costa</p>
+                                <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: Dr. Carlos Lima</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Pendente</span>
+                        </div>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>📅 Criado em: 14/01/2024</div>
+                            <div>🎯 Objetivo: Fortalecimento da musculatura lombar</div>
+                            <div>💪 Exercícios: 8</div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">✓ Aprovar</button>
+                            <button class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700">✗ Rejeitar</button>
+                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">👁️ Ver Detalhes</button>
+                        </div>
+                    </div>
+
+                    <!-- Active Plans -->
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-primary dark:text-white">Plano de Reabilitação de Joelho</h4>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Maria Oliveira</p>
+                                <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: Dra. Maria Santos</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Ativo</span>
+                        </div>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>📅 Aprovado em: 10/01/2024</div>
+                            <div>🎯 Objetivo: Recuperação pós-cirúrgica do joelho</div>
+                            <div>💪 Exercícios: 10</div>
+                            <div>📊 Progresso: 65% concluído</div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">👁️ Ver Detalhes</button>
+                            <button class="bg-purple-600 text-white px-3 py-1 rounded text-xs hover:bg-purple-700">📊 Relatório</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-primary dark:text-white">Plano de Fortalecimento Lombar</h4>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Ana Costa</p>
+                                <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: Dr. Carlos Lima</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Ativo</span>
+                        </div>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>📅 Aprovado em: 08/01/2024</div>
+                            <div>🎯 Objetivo: Fortalecimento da região lombar</div>
+                            <div>💪 Exercícios: 6</div>
+                            <div>📊 Progresso: 40% concluído</div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">👁️ Ver Detalhes</button>
+                            <button class="bg-purple-600 text-white px-3 py-1 rounded text-xs hover:bg-purple-700">📊 Relatório</button>
+                        </div>
+                    </div>
+
+                    <!-- Completed Plans -->
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-primary dark:text-white">Plano de Reabilitação Cervical</h4>
+                                <p class="text-sm text-secondary dark:text-gray-400">Paciente: Pedro Silva</p>
+                                <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: Dr. João Silva</p>
+                            </div>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">Concluído</span>
+                        </div>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>📅 Concluído em: 05/01/2024</div>
+                            <div>🎯 Objetivo: Alívio de dores cervicais</div>
+                            <div>💪 Exercícios: 8</div>
+                            <div>✅ Resultado: Objetivos alcançados</div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">👁️ Ver Detalhes</button>
+                            <button class="bg-purple-600 text-white px-3 py-1 rounded text-xs hover:bg-purple-700">📊 Relatório Final</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Summary -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold mb-3 text-primary dark:text-white">📊 Resumo Estatístico</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-yellow-600">2</div>
+                            <div class="text-xs text-secondary dark:text-gray-400">Pendentes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">2</div>
+                            <div class="text-xs text-secondary dark:text-gray-400">Ativos</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-600">1</div>
+                            <div class="text-xs text-secondary dark:text-gray-400">Concluídos</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">5</div>
+                            <div class="text-xs text-secondary dark:text-gray-400">Total</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Page -->
+            <div id="userManagement" class="tab-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-primary dark:text-white">👥 Gestão de Utilizadores</h2>
+                        <p class="text-secondary dark:text-gray-400 text-sm mt-1">Gerir códigos de acesso e permissões</p>
+                    </div>
+                    <button onclick="showTab('master')" class="text-blue-600 text-sm hover:text-blue-700">← Voltar ao Dashboard</button>
+                </div>
+
+                <!-- Code Generator -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold mb-4 text-primary dark:text-white">🔑 Gerador de Códigos</h3>
+                    <form id="codeGeneratorForm" class="space-y-4">
+                        <select id="userType" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="master">Master</option>
+                            <option value="fisioterapeuta">Fisioterapeuta</option>
+                            <option value="paciente">Paciente</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white" 
+                            placeholder="Nome completo"
+                            required
+                        >
+                        <button 
+                            type="submit" 
+                            id="generateButton"
+                            class="w-full bg-primary text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-opacity-90"
+                        >
+                            <span id="generateText">Gerar Código</span>
+                            <span id="generateLoading" class="loading" style="display: none;"></span>
+                        </button>
+                    </form>
+                    
+                    <div id="generatedCodeSection" class="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg" style="display: none;">
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Código gerado:</div>
+                        <div id="generatedCode" class="font-mono text-lg text-center bg-white dark:bg-gray-700 p-2 rounded border text-primary dark:text-white"></div>
+                        <button onclick="copyCode()" class="w-full mt-2 text-blue-600 text-sm hover:text-blue-700">📋 Copiar</button>
+                    </div>
+
+                    <div id="generateError" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" style="display: none;">
+                        <strong>Erro:</strong> <span id="generateErrorMessage"></span>
+                    </div>
+                </div>
+
+                <!-- Users List -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-primary dark:text-white">👥 Usuários Cadastrados</h3>
+                        <button onclick="loadUsers()" class="text-blue-600 text-sm hover:text-blue-700">🔄 Atualizar</button>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">🐙 Andrade & Machado</label>
-                        <div class="flex items-center justify-center gap-4">
-                            <button type="button" onclick="changeSets(2, -1)" class="w-12 h-12 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xl font-medium transition-colors flex items-center justify-center">
-                                −
-                            </button>
-                            <div class="text-3xl font-light text-gray-800 w-16 text-center" id="sets2Display">0</div>
-                            <button type="button" onclick="changeSets(2, 1)" class="w-12 h-12 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xl font-medium transition-colors flex items-center justify-center">
-                                +
-                            </button>
+                    <div id="usersList" class="space-y-2">
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="loading mx-auto mb-2"></div>
+                            <div class="text-sm">Carregando usuários...</div>
                         </div>
-                        <p class="text-center text-sm text-gray-500 mt-2">sets ganhos</p>
                     </div>
                 </div>
-                
-                <div class="flex gap-3 mt-6">
-                    <button type="button" onclick="closeGameModal()" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium py-3 rounded-lg transition-colors">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-medium py-3 rounded-lg transition-colors">
-                        Registar Jogo
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal de Vitória -->
-    <div id="victoryModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-lg border border-gray-100">
-            <div class="text-6xl mb-4 trophy-bounce">🏆</div>
-            <h2 class="text-3xl font-medium mb-4 text-gray-800" id="victoryTitle">Parabéns!</h2>
-            <p class="text-lg text-gray-600 mb-6" id="victoryMessage">Ganharam o jantar completo!</p>
-            <button onclick="closeVictoryModal()" class="bg-gray-800 hover:bg-gray-900 text-white font-medium py-3 px-8 rounded-lg transition-all">
-                🎉 Celebrar!
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmação -->
-    <div id="confirmModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md mx-4 text-center shadow-lg border border-gray-100">
-            <div class="text-4xl mb-4" id="confirmIcon">⚠️</div>
-            <h3 class="text-xl font-medium mb-4 text-gray-800" id="confirmTitle">Confirmar Ação</h3>
-            <p class="text-gray-600 mb-6" id="confirmMessage">Tem a certeza?</p>
-            <div class="flex gap-3">
-                <button onclick="closeConfirmModal()" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium py-3 rounded-lg transition-colors">
-                    Cancelar
-                </button>
-                <button onclick="confirmAction()" class="flex-1 bg-gray-700 hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition-colors">
-                    Confirmar
-                </button>
             </div>
-        </div>
+
+            <!-- Fisioterapeuta UI Tab -->
+            <div id="fisio" class="tab-content space-y-6">
+                <!-- Stats -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-card-light dark:bg-card-dark p-4 text-center rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="text-2xl font-bold text-blue-600">8</div>
+                        <div class="text-xs text-secondary dark:text-gray-400">Pendentes</div>
+                    </div>
+                    <div class="bg-card-light dark:bg-card-dark p-4 text-center rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="text-2xl font-bold text-green-600">23</div>
+                        <div class="text-xs text-secondary dark:text-gray-400">Aprovados</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold mb-4 text-primary dark:text-white">Ações Rápidas</h3>
+                    <div class="space-y-3">
+                        <button class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg text-sm font-medium">
+                            ➕ Criar Plano
+                        </button>
+                        <button class="w-full bg-green-600 text-white py-3 px-4 rounded-lg text-sm font-medium">
+                            💪 Meus Exercícios
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Create Plan -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold mb-4 text-primary dark:text-white">📋 Novo Plano</h3>
+                    <form class="space-y-4">
+                        <input type="text" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white" placeholder="Nome do plano">
+                        <select class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-card-light dark:bg-card-dark text-primary dark:text-white">
+                            <option>Selecionar paciente</option>
+                            <option>João Silva</option>
+                            <option>Maria Oliveira</option>
+                        </select>
+                        <textarea class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm h-20 bg-card-light dark:bg-card-dark text-primary dark:text-white" placeholder="Descrição do plano"></textarea>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                            <div class="text-sm font-medium mb-2 text-primary dark:text-white">Exercícios Selecionados</div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center bg-white dark:bg-gray-700 p-2 rounded text-sm">
+                                    <span class="text-primary dark:text-white">Alongamento de Ombro</span>
+                                    <button class="text-red-600 text-xs">✗</button>
+                                </div>
+                                <div class="flex justify-between items-center bg-white dark:bg-gray-700 p-2 rounded text-sm">
+                                    <span class="text-primary dark:text-white">Fortalecimento Deltóide</span>
+                                    <button class="text-red-600 text-xs">✗</button>
+                                </div>
+                            </div>
+                            <button type="button" class="w-full mt-2 text-blue-600 text-sm">+ Adicionar Exercício</button>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                            📤 Enviar para Aprovação
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Exercise Library -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-primary dark:text-white">💪 Meus Exercícios</h3>
+                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">+ Novo</button>
+                    </div>
+                    
+                    <input type="text" placeholder="Buscar exercícios..." class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm mb-4 bg-card-light dark:bg-card-dark text-primary dark:text-white">
+                    
+                    <div class="space-y-3">
+                        <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-sm text-primary dark:text-white">Alongamento de Ombro</h4>
+                                <button class="text-blue-600 text-xs">✏️</button>
+                            </div>
+                            <p class="text-xs text-secondary dark:text-gray-400 mb-2">Exercício para mobilidade do ombro direito</p>
+                            <div class="flex space-x-1 mb-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Ombro</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Alongamento</span>
+                            </div>
+                            <div class="text-xs font-medium text-primary dark:text-white">3 séries • 15 repetições</div>
+                        </div>
+                        
+                        <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-sm text-primary dark:text-white">Fortalecimento Deltóide</h4>
+                                <button class="text-blue-600 text-xs">✏️</button>
+                            </div>
+                            <p class="text-xs text-secondary dark:text-gray-400 mb-2">Exercício para fortalecimento do músculo deltóide</p>
+                            <div class="flex space-x-1 mb-2">
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Fortalecimento</span>
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Ombro</span>
+                            </div>
+                            <div class="text-xs font-medium text-primary dark:text-white">2 séries • 12 repetições</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient UI Tab -->
+            <div id="patient" class="tab-content space-y-6">
+                <!-- Welcome -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 dark:text-blue-300" id="patientWelcome">Olá! 👋</h3>
+                    <p class="text-sm text-blue-700 dark:text-blue-400 mt-1">Você tem 2 planos ativos para sua recuperação.</p>
+                </div>
+
+                <!-- Active Plans -->
+                <div class="space-y-4">
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-primary dark:text-white">Reabilitação de Ombro</h4>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Ativo</span>
+                        </div>
+                        <p class="text-sm text-secondary dark:text-gray-400 mb-3">Plano focado na recuperação da mobilidade do ombro direito</p>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>👩‍⚕️ Dra. Maria Santos</div>
+                            <div>📅 Aprovado em 10/01/2024</div>
+                            <div><strong>8 exercícios</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-primary dark:text-white">Fortalecimento Lombar</h4>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Ativo</span>
+                        </div>
+                        <p class="text-sm text-secondary dark:text-gray-400 mb-3">Exercícios para fortalecimento da região lombar</p>
+                        <div class="text-xs text-secondary dark:text-gray-400 space-y-1">
+                            <div>👩‍⚕️ Dr. Carlos Lima</div>
+                            <div>📅 Aprovado em 08/01/2024</div>
+                            <div><strong>6 exercícios</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan Details -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="border-b border-gray-200 dark:border-gray-600 pb-3 mb-4">
+                        <h3 class="font-bold text-lg text-primary dark:text-white">Reabilitação de Ombro</h3>
+                        <p class="text-sm text-secondary dark:text-gray-400 mt-1">Plano focado na recuperação da mobilidade do ombro direito após lesão</p>
+                        <div class="text-xs text-secondary dark:text-gray-400 mt-2 space-y-1">
+                            <div>👩‍⚕️ Dra. Maria Santos</div>
+                            <div>📅 Aprovado em 10/01/2024</div>
+                        </div>
+                    </div>
+
+                    <!-- Exercises -->
+                    <div class="space-y-4">
+                        <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-primary dark:text-white">1. Alongamento de Ombro</h4>
+                                <span class="text-xs text-secondary dark:text-gray-400">3 séries • 15 rep</span>
+                            </div>
+                            <p class="text-sm text-secondary dark:text-gray-400 mb-3">
+                                Posicione o braço direito cruzado sobre o peito. Com a mão esquerda, puxe suavemente o cotovelo direito em direção ao corpo.
+                            </p>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                                🖼️ Imagem demonstrativa
+                            </div>
+                        </div>
+
+                        <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-primary dark:text-white">2. Rotação Externa</h4>
+                                <span class="text-xs text-secondary dark:text-gray-400">2 séries • 10 rep</span>
+                            </div>
+                            <p class="text-sm text-secondary dark:text-gray-400 mb-3">
+                                Com o cotovelo flexionado a 90°, realize movimentos de rotação externa lentamente.
+                            </p>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                                🖼️ Imagem demonstrativa
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Note -->
+                    <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded-r-lg">
+                        <h5 class="font-medium text-yellow-800 dark:text-yellow-300 text-sm">💡 Dica Importante</h5>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-400 mt-1">Execute os exercícios lentamente e pare se sentir dor. Em caso de dúvidas, consulte sua fisioterapeuta.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+
     </div>
 
     <script>
-        let scores = { team1: 0, team2: 0 };
-        let gameHistory = [];
-        let gameNumber = 1;
-
-        // Definir data de hoje por defeito
-        document.getElementById('gameDate').valueAsDate = new Date();
-
-        // Variáveis para controlar os sets no modal
-        let modalSets1 = 0;
-        let modalSets2 = 0;
-
-        // Função para alterar sets no modal
-        function changeSets(team, change) {
-            if (team === 1) {
-                modalSets1 = Math.max(0, Math.min(3, modalSets1 + change));
-                document.getElementById('sets1Display').textContent = modalSets1;
-            } else {
-                modalSets2 = Math.max(0, Math.min(3, modalSets2 + change));
-                document.getElementById('sets2Display').textContent = modalSets2;
+        // API Configuration
+        const API_BASE = 'https://api.steinhq.com/v1/storages/68d29050affba40a62ffb0f6';
+        
+        // Current user data
+        let currentUser = null;
+        
+        // Offline mode for testing
+        let offlineMode = false;
+        let offlineUsers = [
+            {
+                codigo: 'FT-MASTER01',
+                nome: 'Dr. Joana Silva',
+                master: 'true',
+                email: 'joana@fisio.com',
+                especialidade: 'master',
+                ativos: 'true'
+            },
+            {
+                codigo: 'FT-FISIO001',
+                nome: 'Dr. João Silva',
+                master: 'false',
+                email: 'joao@fisio.com',
+                especialidade: 'fisioterapeuta',
+                ativos: 'true'
+            },
+            {
+                codigo: 'FT-PAC0001',
+                nome: 'Maria Santos',
+                master: 'false',
+                email: 'maria@email.com',
+                especialidade: 'paciente',
+                ativos: 'true'
             }
-        }
+        ];
 
-        // Integração com Base de Dados JSONBin
-        const API_URL = 'https://api.jsonbin.io/v3/b/68d45f2eae596e708ffa72a4';
-        const API_KEY = '$2a$10$p2B6kIgO16ed1z49Jr3RNeVTN0uabdyVXVjlSsqctFLPfxeuymD.u';
+        // Offline plans data
+        let offlinePlans = [];
 
-        // Carregar dados da BD
-        async function loadFromDatabase() {
-            try {
-                const response = await fetch(API_URL + '/latest', {
-                    headers: {
-                        'X-Master-Key': API_KEY
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.record) {
-                        scores = data.record.scores || { team1: 0, team2: 0 };
-                        gameHistory = data.record.gameHistory || [];
-                        gameNumber = data.record.gameNumber || 1;
-                        updateDisplay();
-                        console.log('✅ Dados carregados da base de dados online!');
-                        showNotification('📡 Dados sincronizados!', 'success');
-                    }
-                } else {
-                    throw new Error('Erro na resposta da API');
-                }
-            } catch (error) {
-                console.log('⚠️ A usar dados locais:', error);
-                loadData(); // Fallback para localStorage
-                showNotification('📱 A usar dados locais', 'warning');
+        // Offline sessions data
+        let offlineSessions = [
+            {
+                codigosessao: 'SESS001',
+                codigonegocios: 'NEG001',
+                codigolead: 'LEAD001',
+                codigocontacto: 'CONT001',
+                nome: 'João Santos',
+                servico: 'Fisioterapia Ortopédica',
+                negocio: 'Reabilitação Lombar',
+                concelho: 'Lisboa',
+                telefone: '912345678',
+                numerosessao: '3',
+                fechada: 'true',
+                fisioterapeuta: 'Dra. Maria Santos',
+                data: '2024-01-15',
+                horasessao: '14:30',
+                estadosessao: 'Concluída',
+                validacao: ''
+            },
+            {
+                codigosessao: 'SESS002',
+                codigonegocios: 'NEG002',
+                codigolead: 'LEAD002',
+                codigocontacto: 'CONT002',
+                nome: 'Ana Costa',
+                servico: 'Fisioterapia Desportiva',
+                negocio: 'Reabilitação de Ombro',
+                concelho: 'Porto',
+                telefone: '923456789',
+                numerosessao: '5',
+                fechada: 'true',
+                fisioterapeuta: 'Dr. Carlos Lima',
+                data: '2024-01-14',
+                horasessao: '10:00',
+                estadosessao: 'Concluída',
+                validacao: ''
+            },
+            {
+                codigosessao: 'SESS003',
+                codigonegocios: 'NEG003',
+                codigolead: 'LEAD003',
+                codigocontacto: 'CONT003',
+                nome: 'Maria Oliveira',
+                servico: 'Fisioterapia Neurológica',
+                negocio: 'Reabilitação de Joelho',
+                concelho: 'Braga',
+                telefone: '934567890',
+                numerosessao: '2',
+                fechada: 'true',
+                fisioterapeuta: 'Dra. Maria Santos',
+                data: '2024-01-13',
+                horasessao: '16:15',
+                estadosessao: 'Concluída',
+                validacao: ''
             }
-        }
+        ];
 
-        // Guardar dados na BD
-        async function saveToDatabase() {
-            try {
-                const dataToSave = {
-                    scores,
-                    gameHistory,
-                    gameNumber,
-                    lastUpdated: new Date().toISOString()
-                };
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force start with login page
+            document.getElementById('loginPage').classList.add('active');
+            document.getElementById('mainApp').classList.remove('active');
+            localStorage.removeItem('currentUser');
+            currentUser = null;
 
-                const response = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': API_KEY
-                    },
-                    body: JSON.stringify(dataToSave)
-                });
+            // Setup login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Setup code generator form
+            document.getElementById('codeGeneratorForm').addEventListener('submit', handleCodeGeneration);
 
-                if (response.ok) {
-                    console.log('✅ Dados guardados na base de dados online!');
-                    showNotification('💾 Dados guardados online!', 'success');
-                } else {
-                    throw new Error('Erro ao guardar na BD');
-                }
-            } catch (error) {
-                console.log('⚠️ A usar armazenamento local:', error);
-                saveData(); // Fallback para localStorage
-                showNotification('💾 Guardado localmente', 'warning');
-            }
-        }
-
-        // Carregar dados salvos (fallback local)
-        function loadData() {
-            const savedData = localStorage.getItem('padelChampionship');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                scores = data.scores || { team1: 0, team2: 0 };
-                gameHistory = data.gameHistory || [];
-                gameNumber = data.gameNumber || 1;
-                updateDisplay();
-            }
-        }
-
-        // Salvar dados (fallback local)
-        function saveData() {
-            const data = {
-                scores,
-                gameHistory,
-                gameNumber
-            };
-            localStorage.setItem('padelChampionship', JSON.stringify(data));
-        }
-
-        // Mostrar notificações
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white font-medium transition-all transform translate-x-full`;
-            
-            if (type === 'success') {
-                notification.classList.add('bg-green-500');
-            } else if (type === 'warning') {
-                notification.classList.add('bg-yellow-500');
-            } else {
-                notification.classList.add('bg-blue-500');
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animar entrada
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            // Remover após 3 segundos
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-
-        // Abrir modal de jogo
-        function openGameModal() {
-            document.getElementById('gameModal').classList.remove('hidden');
-            document.getElementById('gameModal').classList.add('flex');
-        }
-
-        // Fechar modal de jogo
-        function closeGameModal() {
-            document.getElementById('gameModal').classList.add('hidden');
-            document.getElementById('gameModal').classList.remove('flex');
-            document.getElementById('gameForm').reset();
-            document.getElementById('gameDate').valueAsDate = new Date();
-            // Reset dos sets
-            modalSets1 = 0;
-            modalSets2 = 0;
-            document.getElementById('sets1Display').textContent = '0';
-            document.getElementById('sets2Display').textContent = '0';
-        }
-
-        // Processar formulário de jogo
-        document.getElementById('gameForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const date = document.getElementById('gameDate').value;
-            const location = document.getElementById('gameLocation').value;
-            const sets1 = modalSets1;
-            const sets2 = modalSets2;
-            
-            // Validar que alguém ganhou
-            if (sets1 === sets2) {
-                alert('Um dos equipas tem de ganhar mais sets que a outra!');
-                return;
-            }
-            
-            // Determinar vencedor
-            const winner = sets1 > sets2 ? 1 : 2;
-            const winnerName = winner === 1 ? 'Salgado & Sá' : 'Andrade & Machado';
-            
-            // Atualizar pontuações
-            scores[`team${winner}`]++;
-            
-            // Adicionar ao histórico
-            gameHistory.unshift({
-                game: gameNumber++,
-                date: new Date(date).toLocaleDateString('pt-PT'),
-                location,
-                sets1,
-                sets2,
-                winner: winnerName,
-                winnerTeam: winner
+            // Auto-uppercase access code input
+            document.getElementById('accessCode').addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase();
             });
-            
-            updateDisplay();
-            saveToDatabase();
-            closeGameModal();
-            
-            // Verificar se alguém ganhou o torneio
-            if (scores[`team${winner}`] >= 5) {
-                setTimeout(() => showVictoryModal(winnerName, winner), 500);
-            }
         });
 
-        // Atualizar display
-        function updateDisplay() {
-            document.getElementById('score1').textContent = scores.team1;
-            document.getElementById('score2').textContent = scores.team2;
+        // Handle login
+        async function handleLogin(e) {
+            e.preventDefault();
             
+            const accessCode = document.getElementById('accessCode').value.trim().toUpperCase();
+            const loginButton = document.getElementById('loginButton');
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            const loginError = document.getElementById('loginError');
+            
+            // Show loading state
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            loginButton.disabled = true;
+            loginError.style.display = 'none';
 
-            
-            // Atualizar menu
-            const maxScore = Math.max(scores.team1, scores.team2);
-            for (let i = 1; i <= 5; i++) {
-                const menuItem = document.getElementById(`menu-${i}`);
-                if (i <= maxScore) {
-                    menuItem.classList.add('unlocked');
-                    menuItem.classList.add('ring-2', 'ring-gray-400', 'shadow-sm');
+            try {
+                let users = [];
+                
+                if (!offlineMode) {
+                    try {
+                        // Try to fetch from API first
+                        const response = await fetch(`${API_BASE}/utilizadores`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('API Error');
+                        }
+                        
+                        users = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed, switching to offline mode:', apiError);
+                        offlineMode = true;
+                        users = offlineUsers;
+                        
+                        // Show offline mode notification
+                        const offlineNotice = document.createElement('div');
+                        offlineNotice.className = 'mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm';
+                        offlineNotice.innerHTML = '<strong>Modo Offline:</strong> Usando dados de demonstração. Conecte-se à internet para acessar dados reais.';
+                        document.getElementById('loginError').parentNode.insertBefore(offlineNotice, document.getElementById('loginError').nextSibling);
+                    }
                 } else {
-                    menuItem.classList.remove('unlocked', 'ring-2', 'ring-gray-400', 'shadow-sm');
+                    users = offlineUsers;
                 }
-            }
+                
+                // Find user by access code
+                const user = users.find(u => u.codigo === accessCode);
 
-            // Atualizar histórico
-            updateGameHistory();
+                if (!user) {
+                    throw new Error('Código de acesso não encontrado');
+                }
+                
+                if (user.ativos !== 'true') {
+                    throw new Error('Usuário inativo. Entre em contato com o administrador');
+                }
+
+                // Save user data
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Show main app
+                showMainApp();
+
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                loginError.style.display = 'block';
+            } finally {
+                // Reset loading state
+                loginText.style.display = 'inline';
+                loginLoading.style.display = 'none';
+                loginButton.disabled = false;
+            }
         }
 
-        // Atualizar histórico de jogos
-        function updateGameHistory() {
-            const historyDiv = document.getElementById('gameHistory');
+        // Show main application
+        function showMainApp() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('mainApp').classList.add('active');
             
-            if (gameHistory.length === 0) {
-                historyDiv.innerHTML = `
-                    <div class="text-center py-8 text-gray-400">
-                        <div class="text-4xl mb-2">🎾</div>
-                        <p>Nenhum jogo registado ainda</p>
-                        <p class="text-sm">Cliquem em "Registar Novo Jogo" para começar!</p>
+            // Setup navigation based on user type
+            setupNavigation();
+            
+            // Update side menu user info
+            updateSideMenuUserInfo();
+            
+            // Load sessions data
+            loadSessions();
+            
+            // Load plans data
+            loadPlans();
+            
+            // Update patient welcome message
+            if (currentUser.especialidade === 'paciente') {
+                const patientWelcome = document.getElementById('patientWelcome');
+                if (patientWelcome) {
+                    patientWelcome.textContent = `Olá, ${currentUser.nome}! 👋`;
+                }
+            }
+        }
+
+        // Update side menu user info
+        function updateSideMenuUserInfo() {
+            if (!currentUser) return;
+            
+            // Update user name and type in side menu
+            document.getElementById('sideMenuUserName').textContent = currentUser.nome;
+            document.getElementById('sideMenuUserType').textContent = currentUser.especialidade.charAt(0).toUpperCase() + currentUser.especialidade.slice(1);
+            
+            // Update user initials in side menu
+            const initials = currentUser.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('sideMenuUserInitials').textContent = initials;
+            
+            // Update header user info
+            document.getElementById('headerUserName').textContent = currentUser.nome;
+            document.getElementById('headerUserType').textContent = currentUser.especialidade.charAt(0).toUpperCase() + currentUser.especialidade.slice(1);
+            document.getElementById('headerUserInitials').textContent = initials;
+            
+            // Show/hide user management menu item for master users
+            const userManagementMenuItem = document.getElementById('userManagementMenuItem');
+            if (currentUser.master === 'true' || currentUser.especialidade === 'master') {
+                userManagementMenuItem.style.display = 'block';
+            } else {
+                userManagementMenuItem.style.display = 'none';
+            }
+        }
+
+        // Toggle side menu
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            
+            if (sideMenu.classList.contains('translate-x-full')) {
+                // Open menu
+                sideMenu.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Close menu
+                closeSideMenu();
+            }
+        }
+
+        // Close side menu
+        function closeSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            
+            sideMenu.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            closeSideMenu();
+            
+            if (currentUser.master === 'true' || currentUser.especialidade === 'master') {
+                showTab('master');
+            } else if (currentUser.especialidade === 'fisioterapeuta') {
+                showTab('fisio');
+            } else if (currentUser.especialidade === 'paciente') {
+                showTab('patient');
+            }
+        }
+
+        // Setup navigation tabs based on user type
+        function setupNavigation() {
+            const tabContainer = document.getElementById('tabContainer');
+            tabContainer.innerHTML = '';
+
+            // Check user type and show appropriate tab
+            if (currentUser.master === 'true' || currentUser.especialidade === 'master') {
+                // Master user - show only master tab
+                tabContainer.innerHTML = ``;
+                showTab('master');
+            } else if (currentUser.especialidade === 'fisioterapeuta') {
+                // Fisioterapeuta - show only fisio tab
+                tabContainer.innerHTML = `
+                    <button onclick="showTab('fisio')" class="tab-button active px-4 py-3 text-sm font-medium whitespace-nowrap">
+                        🩺 Fisioterapeuta
+                    </button>
+                `;
+                showTab('fisio');
+            } else if (currentUser.especialidade === 'paciente') {
+                // Paciente - show only patient tab
+                tabContainer.innerHTML = `
+                    <button onclick="showTab('patient')" class="tab-button active px-4 py-3 text-sm font-medium whitespace-nowrap">
+                        🧑‍🦽 Paciente
+                    </button>
+                `;
+                showTab('patient');
+            } else {
+                // Fallback - show error message
+                tabContainer.innerHTML = `
+                    <div class="px-4 py-3 text-sm text-red-600">
+                        Erro: Tipo de usuário não reconhecido (${currentUser.especialidade})
                     </div>
                 `;
+            }
+        }
+
+        // Show tab content
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button (only if event exists)
+            if (typeof event !== 'undefined' && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find and activate the correct button
+                const activeButton = document.querySelector(`button[onclick="showTab('${tabName}')"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+            }
+        }
+
+        // Show user management page
+        function showUserManagement() {
+            closeSideMenu();
+            showTab('userManagement');
+            loadUsers();
+        }
+
+        // Show all plans page
+        function showAllPlans() {
+            closeSideMenu();
+            showTab('allPlans');
+        }
+
+        // Handle code generation (Master only)
+        async function handleCodeGeneration(e) {
+            e.preventDefault();
+            
+            if (currentUser.master !== 'true') {
+                alert('Apenas usuários Master podem gerar códigos');
                 return;
             }
 
-            historyDiv.innerHTML = gameHistory.map((game, index) => `
-                <div class="bg-gray-50 border border-gray-100 p-3 sm:p-4 rounded-xl border-l-4 border-l-gray-400">
-                    <div class="flex justify-between items-center gap-2">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs sm:text-sm font-medium whitespace-nowrap">
-                                    Jogo ${game.game}
-                                </span>
-                                <span class="font-medium text-gray-800 text-sm sm:text-base truncate">${game.winner}</span>
-                                <span class="text-lg">🏆</span>
-                            </div>
-                            <div class="text-xs sm:text-sm text-gray-500 truncate">
-                                📍 ${game.location} • 📅 ${game.date}
+            const userType = document.getElementById('userType').value;
+            const userName = document.getElementById('userName').value.trim();
+
+            
+            const generateButton = document.getElementById('generateButton');
+            const generateText = document.getElementById('generateText');
+            const generateLoading = document.getElementById('generateLoading');
+            const generateError = document.getElementById('generateError');
+            
+            // Show loading state
+            generateText.style.display = 'none';
+            generateLoading.style.display = 'inline-block';
+            generateButton.disabled = true;
+            generateError.style.display = 'none';
+
+            try {
+                // Generate unique code
+                const code = generateUniqueCode();
+                
+                // Prepare user data
+                const userData = {
+                    codigo: code,
+                    nome: userName,
+                    master: userType === 'master' ? 'true' : 'false',
+                    email: '',
+                    especialidade: userType,
+                    ativos: 'true'
+                };
+
+                if (offlineMode) {
+                    // Add to offline users array
+                    offlineUsers.push(userData);
+                    
+                    // Show success message for offline mode
+                    alert('Usuário criado no modo offline! Código: ' + code);
+                } else {
+                    try {
+                        // Save to API
+                        const response = await fetch(`${API_BASE}/utilizadores`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify([userData])
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erro ao salvar usuário');
+                        }
+                    } catch (apiError) {
+                        console.warn('API failed during user creation, adding to offline mode');
+                        offlineMode = true;
+                        offlineUsers.push(userData);
+                    }
+                }
+
+                // Show generated code
+                document.getElementById('generatedCode').textContent = code;
+                document.getElementById('generatedCodeSection').style.display = 'block';
+                
+                // Reset form
+                document.getElementById('codeGeneratorForm').reset();
+                
+                // Reload users list
+                loadUsers();
+
+            } catch (error) {
+                console.error('Code generation error:', error);
+                document.getElementById('generateErrorMessage').textContent = error.message;
+                generateError.style.display = 'block';
+            } finally {
+                // Reset loading state
+                generateText.style.display = 'inline';
+                generateLoading.style.display = 'none';
+                generateButton.disabled = false;
+            }
+        }
+
+        // Generate unique code
+        function generateUniqueCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'FT-';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        // Load users list (Master only)
+        async function loadUsers() {
+            if (currentUser.master !== 'true') return;
+
+            const usersList = document.getElementById('usersList');
+            
+            try {
+                let users = [];
+                
+                if (offlineMode) {
+                    users = offlineUsers;
+                } else {
+                    try {
+                        const response = await fetch(`${API_BASE}/utilizadores`);
+                        users = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed while loading users, using offline data');
+                        offlineMode = true;
+                        users = offlineUsers;
+                    }
+                }
+
+                if (users.length === 0) {
+                    usersList.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="text-sm">Nenhum usuário cadastrado</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                usersList.innerHTML = users.map(user => `
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3 flex justify-between items-center bg-card-light dark:bg-card-dark">
+                        <div>
+                            <div class="font-medium text-sm text-primary dark:text-white">${user.nome}</div>
+                            <div class="text-xs text-secondary dark:text-gray-400">
+                                ${user.codigo} • ${user.especialidade}
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                            <div class="text-center">
-                                <div class="font-medium text-base sm:text-lg">
-                                    <span class="text-gray-700">${game.sets1}</span>
-                                    -
-                                    <span class="text-gray-700">${game.sets2}</span>
-                                </div>
-                                <div class="text-xs text-gray-400">sets</div>
-                            </div>
-                            <button onclick="deleteGame(${index})" class="bg-gray-500 hover:bg-gray-600 text-white p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm transition-colors flex-shrink-0" title="Eliminar jogo">
-                                🗑️
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 rounded text-xs ${
+                                user.ativos === 'true' 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                            }">
+                                ${user.ativos === 'true' ? 'Ativo' : 'Inativo'}
+                            </span>
+                            ${user.master === 'true' ? '<span class="text-yellow-600 text-xs">👑</span>' : ''}
+                            <button onclick="toggleUserStatus('${user.codigo}')" class="text-blue-600 text-xs hover:text-blue-700">
+                                ${user.ativos === 'true' ? '🔒 Desativar' : '🔓 Ativar'}
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        }
+                `).join('');
 
-
-
-        // Mostrar modal de vitória
-        function showVictoryModal(teamName, winnerTeam) {
-            document.getElementById('victoryTitle').textContent = `${teamName} Venceram!`;
-            document.getElementById('victoryMessage').textContent = 'Parabéns! Ganharam o jantar completo de 5 pratos! 🍽️';
-            document.getElementById('victoryModal').classList.remove('hidden');
-            document.getElementById('victoryModal').classList.add('flex');
-            
-            // Atualizar display e guardar
-            updateDisplay();
-            saveToDatabase();
-        }
-
-        // Fechar modal de vitória
-        function closeVictoryModal() {
-            document.getElementById('victoryModal').classList.add('hidden');
-            document.getElementById('victoryModal').classList.remove('flex');
-        }
-
-        // Variável para guardar a ação pendente
-        let pendingAction = null;
-
-        // Mostrar modal de confirmação personalizado
-        function showConfirmModal(title, message, icon, action) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmIcon').textContent = icon;
-            pendingAction = action;
-            
-            document.getElementById('confirmModal').classList.remove('hidden');
-            document.getElementById('confirmModal').classList.add('flex');
-        }
-
-        // Fechar modal de confirmação
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
-            document.getElementById('confirmModal').classList.remove('flex');
-            pendingAction = null;
-        }
-
-        // Executar ação confirmada
-        function confirmAction() {
-            if (pendingAction) {
-                pendingAction();
+            } catch (error) {
+                console.error('Error loading users:', error);
+                usersList.innerHTML = `
+                    <div class="text-center text-red-500 py-4">
+                        <div class="text-sm">Erro ao carregar usuários</div>
+                    </div>
+                `;
             }
-            closeConfirmModal();
         }
 
-        // Eliminar jogo individual
-        function deleteGame(gameIndex) {
-            showConfirmModal(
-                'Eliminar Jogo',
-                'Tem a certeza que quer eliminar este jogo?',
-                '🗑️',
-                () => {
-                    const deletedGame = gameHistory[gameIndex];
-                    
-                    // Remover vitória da equipa
-                    if (deletedGame.winnerTeam === 1) {
-                        scores.team1 = Math.max(0, scores.team1 - 1);
-                    } else {
-                        scores.team2 = Math.max(0, scores.team2 - 1);
+        // Toggle user status (Master only)
+        async function toggleUserStatus(codigo) {
+            if (currentUser.master !== 'true') return;
+
+            try {
+                if (offlineMode) {
+                    // Update in offline array
+                    const userIndex = offlineUsers.findIndex(u => u.codigo === codigo);
+                    if (userIndex !== -1) {
+                        offlineUsers[userIndex].ativos = offlineUsers[userIndex].ativos === 'true' ? 'false' : 'true';
+                        loadUsers();
                     }
+                    return;
+                }
+
+                // Get all users and find the one to update
+                const response = await fetch(`${API_BASE}/utilizadores`);
+                const users = await response.json();
+                
+                const userIndex = users.findIndex(u => u.codigo === codigo);
+                if (userIndex === -1) return;
+                
+                const user = users[userIndex];
+                const newStatus = user.ativos === 'true' ? 'false' : 'true';
+                
+                // Update user status using row number (index + 1)
+                const updateResponse = await fetch(`${API_BASE}/utilizadores/${userIndex + 1}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        codigo: user.codigo,
+                        nome: user.nome,
+                        master: user.master,
+                        email: user.email,
+                        especialidade: user.especialidade,
+                        ativos: newStatus
+                    })
+                });
+                
+                if (!updateResponse.ok) {
+                    throw new Error('Erro ao atualizar usuário');
+                }
+                
+                // Reload users list
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error toggling user status:', error);
+                alert('Erro ao alterar status do usuário');
+            }
+        }
+
+        // Copy generated code to clipboard
+        function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Código copiado para a área de transferência!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Código copiado para a área de transferência!');
+            });
+        }
+
+        // Toggle section visibility
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                section.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // Load plans from API or offline data
+        async function loadPlans() {
+            const activePlansContainer = document.getElementById('activePlans');
+            const activePlansCount = document.getElementById('activePlansCount');
+            
+            try {
+                let plans = [];
+                
+                if (offlineMode) {
+                    plans = offlinePlans;
+                } else {
+                    try {
+                        const response = await fetch(`${API_BASE}/planos`);
+                        if (!response.ok) {
+                            throw new Error('API Error');
+                        }
+                        plans = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed while loading plans, using offline data');
+                        offlineMode = true;
+                        plans = offlinePlans;
+                    }
+                }
+
+                // Filter plans with estado = "aberto"
+                const openPlans = plans.filter(plan => plan.estado === 'aberto');
+
+                // Update count
+                activePlansCount.textContent = `(${openPlans.length})`;
+
+                if (openPlans.length === 0) {
+                    activePlansContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="text-sm">Nenhum plano aberto</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render open plans
+                activePlansContainer.innerHTML = openPlans.map(plan => `
+                    <div class="flex items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-3 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.5 21H14.5C18.6421 21 21 18.6421 21 14.5V9.5C21 5.35786 18.6421 3 14.5 3H9.5C5.35786 3 3 5.35786 3 9.5V14.5C3 18.6421 5.35786 21 9.5 21Z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M7 12L10 15L17 8" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-primary dark:text-white">${plan.titulo}</p>
+                            <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: ${plan.fisioterapeuta}</p>
+                            <p class="text-xs text-secondary dark:text-gray-400">Plano: ${plan.codigoplano}</p>
+                            <p class="text-xs text-secondary dark:text-gray-400">Serviço: ${plan.servico || 'Não especificado'}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading plans:', error);
+                activePlansContainer.innerHTML = `
+                    <div class="text-center text-red-500 py-4">
+                        <div class="text-sm">Erro ao carregar planos</div>
+                    </div>
+                `;
+                activePlansCount.textContent = '(0)';
+            }
+        }
+
+        // Load sessions from API or offline data
+        async function loadSessions() {
+            const completedSessionsContainer = document.getElementById('completedSessions');
+            const completedSessionsCount = document.getElementById('completedSessionsCount');
+            
+            try {
+                let sessions = [];
+                
+                if (offlineMode) {
+                    sessions = offlineSessions;
+                } else {
+                    try {
+                        const response = await fetch(`${API_BASE}/sessoes`);
+                        if (!response.ok) {
+                            throw new Error('API Error');
+                        }
+                        sessions = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed while loading sessions, using offline data');
+                        offlineMode = true;
+                        sessions = offlineSessions;
+                    }
+                }
+
+                // Update count
+                completedSessionsCount.textContent = `(${sessions.length})`;
+
+                if (sessions.length === 0) {
+                    completedSessionsContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="text-sm">Nenhuma sessão realizada</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Filter sessions where validacao is empty AND date/time is in the past
+                const validSessions = sessions.filter(session => {
+                    // Check if validation is empty
+                    const isNotValidated = !session.validacao || session.validacao.trim() === '';
                     
-                    // Remover jogo do histórico
-                    gameHistory.splice(gameIndex, 1);
+                    // Check if session date/time is in the past
+                    const sessionDateTime = new Date(`${session.data}T${session.horasessao}`);
+                    const now = new Date();
+                    const isInPast = sessionDateTime < now;
                     
-                    updateDisplay();
-                    saveToDatabase();
-                    showNotification('🗑️ Jogo eliminado!', 'success');
+                    return isNotValidated && isInPast;
+                });
+
+                // Update count with filtered sessions
+                completedSessionsCount.textContent = `(${validSessions.length})`;
+
+                if (validSessions.length === 0) {
+                    completedSessionsContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <div class="text-sm">Nenhuma sessão pendente de validação</div>
+                        </div>
+                    `;
+                    return;
                 }
-            );
+
+                // Render sessions
+                completedSessionsContainer.innerHTML = validSessions.map(session => `
+                    <div onclick="createPlanFromSession('${session.codigosessao}')" class="flex items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-3 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-primary dark:text-white">${session.nome} - ${formatDate(session.data)}</p>
+                            <p class="text-xs text-secondary dark:text-gray-400">Fisioterapeuta: ${session.fisioterapeuta}</p>
+                            <p class="text-xs text-secondary dark:text-gray-400">Serviço: ${session.servico}</p>
+                        </div>
+
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                completedSessionsContainer.innerHTML = `
+                    <div class="text-center text-red-500 py-4">
+                        <div class="text-sm">Erro ao carregar sessões</div>
+                    </div>
+                `;
+                completedSessionsCount.textContent = '(0)';
+            }
         }
 
-        // Limpar histórico
-        function clearHistory() {
-            showConfirmModal(
-                'Limpar Histórico',
-                'Tem a certeza que quer limpar o histórico de jogos? As pontuações mantêm-se.',
-                '🧹',
-                () => {
-                    gameHistory = [];
-                    updateDisplay();
-                    saveToDatabase();
-                    showNotification('🗑️ Histórico limpo!', 'success');
-                }
-            );
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
         }
 
-        // Reset do torneio
-        function resetTournament() {
-            showConfirmModal(
-                'Reiniciar Torneio',
-                'Tem a certeza que quer começar um novo torneio? Todos os dados serão perdidos.',
-                '🔄',
-                () => {
-                    scores = { team1: 0, team2: 0 };
-                    gameHistory = [];
-                    gameNumber = 1;
-                    updateDisplay();
-                    saveToDatabase();
-                    showNotification('🔄 Torneio reiniciado!', 'success');
-                }
-            );
+        // View session details
+        function viewSessionDetails(codigosessao) {
+            const sessions = offlineMode ? offlineSessions : [];
+            const session = sessions.find(s => s.codigosessao === codigosessao);
+            
+            if (!session) {
+                alert('Sessão não encontrada');
+                return;
+            }
+
+            const details = `
+📋 DETALHES DA SESSÃO
+
+🔢 Código: ${session.codigosessao}
+👤 Paciente: ${session.nome}
+📞 Telefone: ${session.telefone}
+👩‍⚕️ Fisioterapeuta: ${session.fisioterapeuta}
+🏥 Serviço: ${session.servico}
+💼 Negócio: ${session.negocio}
+📍 Concelho: ${session.concelho}
+📅 Data: ${formatDate(session.data)}
+⏰ Hora: ${session.horasessao}
+🔢 Sessão Número: ${session.numerosessao}
+📊 Estado: ${session.estadosessao}
+🔒 Fechada: ${session.fechada === 'true' ? 'Sim' : 'Não'}
+
+⚠️ Status: ${session.validacao ? 'Validada' : 'Pendente de Validação'}
+
+📋 Códigos de Referência:
+• Negócios: ${session.codigonegocios}
+• Lead: ${session.codigolead}
+• Contacto: ${session.codigocontacto}
+            `;
+
+            alert(details);
         }
 
-        // Inicializar - carregar da base de dados online
-        loadFromDatabase();
+        // Validate session
+        async function validateSession(codigosessao) {
+            if (!confirm('Tem certeza que deseja validar esta sessão?')) {
+                return;
+            }
+
+            try {
+                if (offlineMode) {
+                    // Update in offline array
+                    const sessionIndex = offlineSessions.findIndex(s => s.codigosessao === codigosessao);
+                    if (sessionIndex !== -1) {
+                        offlineSessions[sessionIndex].validacao = 'Validada pelo Master em ' + new Date().toLocaleString('pt-BR');
+                        alert('Sessão validada com sucesso (modo offline)!');
+                        loadSessions(); // Reload to update the list
+                    }
+                    return;
+                }
+
+                // Get all sessions and find the one to update
+                const response = await fetch(`${API_BASE}/sessoes`);
+                const sessions = await response.json();
+                
+                const sessionIndex = sessions.findIndex(s => s.codigosessao === codigosessao);
+                if (sessionIndex === -1) {
+                    alert('Sessão não encontrada');
+                    return;
+                }
+                
+                const session = sessions[sessionIndex];
+                
+                // Update session with validation
+                const updateResponse = await fetch(`${API_BASE}/sessoes/${sessionIndex + 1}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ...session,
+                        validacao: 'Validada pelo Master em ' + new Date().toLocaleString('pt-BR')
+                    })
+                });
+                
+                if (!updateResponse.ok) {
+                    throw new Error('Erro ao validar sessão');
+                }
+                
+                alert('Sessão validada com sucesso!');
+                
+                // Reload sessions list
+                loadSessions();
+                
+            } catch (error) {
+                console.error('Error validating session:', error);
+                alert('Erro ao validar sessão: ' + error.message);
+            }
+        }
+
+        // Track if plan creation is in progress
+        let planCreationInProgress = false;
+
+        // Create plan from session
+        async function createPlanFromSession(codigosessao) {
+            // Prevent multiple clicks while processing
+            if (planCreationInProgress) {
+                return;
+            }
+
+            try {
+                // Set loading state
+                planCreationInProgress = true;
+                
+                // Show loading state in the UI
+                showSessionsLoading();
+                
+                // Find the session
+                let sessions = offlineMode ? offlineSessions : [];
+                
+                if (!offlineMode) {
+                    try {
+                        const response = await fetch(`${API_BASE}/sessoes`);
+                        sessions = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed, using offline sessions');
+                        sessions = offlineSessions;
+                    }
+                }
+                
+                const session = sessions.find(s => s.codigosessao === codigosessao);
+                if (!session) {
+                    alert('Sessão não encontrada');
+                    return;
+                }
+
+                // Check for existing plans with same patient, date and time
+                let existingPlans = offlineMode ? offlinePlans : [];
+                
+                if (!offlineMode) {
+                    try {
+                        const response = await fetch(`${API_BASE}/planos`);
+                        existingPlans = await response.json();
+                    } catch (apiError) {
+                        console.warn('API failed while checking existing plans, using offline data');
+                        existingPlans = offlinePlans;
+                    }
+                }
+
+                // Check for duplicate plan
+                const duplicatePlan = existingPlans.find(plan => 
+                    plan.nome === session.nome && 
+                    plan.datasessao === session.data &&
+                    sessions.find(s => s.codigosessao === plan.codigosessao)?.horasessao === session.horasessao
+                );
+
+                if (duplicatePlan) {
+                    alert(`⚠️ Já existe um plano para este paciente na mesma data e hora!\n\nPaciente: ${session.nome}\nData: ${formatDate(session.data)}\nHora: ${session.horasessao}\n\nCódigo do plano existente: ${duplicatePlan.codigoplano}`);
+                    return;
+                }
+
+                // Generate unique plan code
+                const codigoplano = generatePlanCode();
+                
+                // Create plan data
+                const planData = {
+                    codigoplano: codigoplano,
+                    codigosessao: session.codigosessao,
+                    codigocontacto: session.codigocontacto,
+                    nome: session.nome,
+                    datasessao: session.data,
+                    dataplano: new Date().toISOString().split('T')[0], // Today's date
+                    estado: 'aberto',
+                    titulo: `${session.nome} - ${formatDate(session.data)}`,
+                    comentarios: '',
+                    fisioterapeuta: session.fisioterapeuta,
+                    servico: session.servico
+                };
+
+                // Save plan
+                if (offlineMode) {
+                    offlinePlans.push(planData);
+                    alert(`Plano criado com sucesso!\n\nCódigo: ${codigoplano}\nTítulo: ${planData.titulo}\n\nO plano foi criado no modo offline.`);
+                } else {
+                    try {
+                        const response = await fetch(`${API_BASE}/planos`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify([planData])
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erro ao salvar plano');
+                        }
+                        
+                        alert(`Plano criado com sucesso!\n\nCódigo: ${codigoplano}\nTítulo: ${planData.titulo}`);
+                    } catch (apiError) {
+                        console.warn('API failed during plan creation, saving offline');
+                        offlinePlans.push(planData);
+                        alert(`Plano criado com sucesso (modo offline)!\n\nCódigo: ${codigoplano}\nTítulo: ${planData.titulo}`);
+                    }
+                }
+
+                // Reload plans first
+                await loadPlans();
+                
+                // Then reload sessions (this will update the list and remove the processed session)
+                await loadSessions();
+
+            } catch (error) {
+                console.error('Error creating plan:', error);
+                alert('Erro ao criar plano: ' + error.message);
+            } finally {
+                // Reset loading state
+                planCreationInProgress = false;
+            }
+        }
+
+        // Show loading state for sessions
+        function showSessionsLoading() {
+            const completedSessionsContainer = document.getElementById('completedSessions');
+            completedSessionsContainer.innerHTML = `
+                <div class="text-center text-gray-500 py-4">
+                    <div class="loading mx-auto mb-2"></div>
+                    <div class="text-sm">Criando plano...</div>
+                </div>
+            `;
+        }
+
+        // Generate unique plan code
+        function generatePlanCode() {
+            const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `PLN-${timestamp}${random}`;
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            // Reset to login page
+            document.getElementById('mainApp').classList.remove('active');
+            document.getElementById('loginPage').classList.add('active');
+            
+            // Reset forms
+            document.getElementById('loginForm').reset();
+            document.getElementById('accessCode').focus();
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9845986c90c04891',t:'MTc1ODc1MTY1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9846225b760d58fc',t:'MTc1ODc1NzMwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
